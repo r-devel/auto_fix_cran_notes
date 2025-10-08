@@ -3,12 +3,23 @@ library(dplyr)
 library(stringr)
 
 # get check information and identify packages with Rd files NOTE
-db <- tools::CRAN_package_db()
+
 details <- tools::CRAN_check_details(flavors = "r-devel-linux-x86_64-debian-gcc")
 Rd_NOTE <- subset(details, Check == "Rd files" & Status == "NOTE")
 
+pdb <- CRAN_package_db()
+Rd_NOTE <- merge(Rd_NOTE, pdb)
+
+# restrict "Lost braces" and packages that use GitHub to report issues
+TODO <- Rd_NOTE[grepl("^http?s://(github.com|gitlab.com|bitbucket.org).*issues",
+                      Rd_NOTE$BugReports),]
+
 # Find packages with "Lost braces" in the Rd NOTE
-Rd_NOTE_lb <- Rd_NOTE[grep("Lost braces", Rd_NOTE$Output),]
+Rd_NOTE_lb <- TODO[grep("Lost braces", TODO$Output),]
+
+revdeps <- strsplit(Rd_NOTE_lb$`Reverse depends`, ",")
+n_revdeps <- lengths(revdeps)
+n_revdeps[is.na(revdeps)] <- 0
 
 get_note_strings <- function(note_details) {
   # Split the note details by 'checkRd:' and return the parts after the first
