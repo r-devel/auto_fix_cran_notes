@@ -1,4 +1,54 @@
-# auto_fix_cran_notes
+# Auto-fix CRAN NOTES
+
+## Background
+The purpose of this repo is to work on the development of scripts/functions
+to automatically fix CRAN NOTES related to documentation.
+
+For example, the following is commonly used in documentation, but this results
+in a NOTE:
+
+```r
+\itemize{
+  \item{First}{This is the first item}
+  \item{Second}{This is the second item}
+  .
+  .
+  .
+}
+```
+
+The above has (at least) two possible fixes:
+
+1. Replace `\itemize` with `\describe`, the latter supports `\item` entries with
+both a label and a description.
+
+    ```r
+    \describe{
+      \item{First}{This is the first item}
+      \item{Second}{This is the second item}
+      .
+      .
+      .
+    }
+    ```
+
+2. Update each `\item` to remove the 'label' portion: `\item{}{}` >> `\item{}`:
+
+    ```r
+    \itemize{
+      \item{First: This is the first item}
+      \item{Second: This is the second item}
+      .
+      .
+      .
+    }
+    ```
+
+More details about the CRAN NOTES can be found in the following issues:
+
+- [r-devel/r-dev-day/issues/110](https://github.com/r-devel/r-dev-day/issues/110)
+- [r-devel/r-dev-day/issues/131](https://github.com/r-devel/r-dev-day/issues/131)
+- [r-devel/r-dev-day/issues/132](https://github.com/r-devel/r-dev-day/issues/132)
 
 ## Categorising Notes
 
@@ -14,5 +64,6 @@ splits the notes into the following categories:
 - `escaped_latex_specials`: notes about LaTeX special characters
 - `missing_escapes`: notes about missing escapes. E.g. `code` should be `\code`
 - `no_suggestion`: notes that do not offer an immediate clear suggestion for fixing them. 
-  TODO there may be more information in the rest of the note, on inspection these often look like missing escapes
+
+  > **TODO** there may be more information in the rest of the note, on inspection these often look like missing escapes
 - `other`: notes that do not fit into any of the above categories
