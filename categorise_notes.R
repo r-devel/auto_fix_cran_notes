@@ -108,3 +108,10 @@ notes_df %>%
 notes_df %>%
   group_by(Package, note_category) %>%
   summarise(n())
+
+# Prioritise by revdeps
+Rd_NOTE_lb <- cbind(n_revdeps = n_revdeps, Rd_NOTE_lb)[
+  order(n_revdeps, decreasing = TRUE),
+]
+Rd_NOTE_lb[, c("n_revdeps", "Package", "BugReports")] |>
+  filter(n_revdeps > 0)
