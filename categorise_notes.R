@@ -35,7 +35,7 @@ get_note_strings <- function(note_details) {
 
 notes <- get_note_strings(Rd_NOTE_lb$Output)
 
-notes_per_package <- sapply(notes, length)
+notes_per_package <- lengths(notes)
 
 
 # Some simple pattern matching to classify the errors
