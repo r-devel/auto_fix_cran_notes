@@ -63,15 +63,34 @@ pr2 <- subset(
 )$url
 prs <- unique(sort(c(pr1, pr2)))
 
+# Get GitHub repos and usernames to query
+str_remove(prs, "https://github.com") |> str_split("/")
+
+pr_df <- data.frame(
+  url = prs,
+  owner = str_remove(prs, "https://github.com") |>
+    str_split("/") |>
+    sapply(function(x) x[2]),
+  repo = str_remove(prs, "https://github.com") |>
+    str_split("/") |>
+    sapply(function(x) x[3]),
+  pr_number = str_remove(prs, "https://github.com") |>
+    str_split("/") |>
+    sapply(function(x) x[5])
+)
+
+
 #Compare this list to the Google Sheets
 library(googlesheets4)
 sheet_url <- "https://docs.google.com/spreadsheets/d/1qL5s2okfQmh_ufwh3MS6rJPzIlLmJzIN2g9u2loFzkA/edit?gid=1451772479#gid=1451772479"
 google_sheet <- googlesheets4::read_sheet(sheet_url)
 
-repo_names <- prs |>
-  str_remove("/pull/\\d+$")
+google_sheet$PR_update <- NA
+
+
+j <- 0
 for (i in google_sheet$URL) {
   if (i %in% repo_names) {
-    message(google_sheet$PR_status[google_sheet$URL == i])
+    google_sheet$PR_update[google_sheet$URL == i] <- "Program update"
   }
 }
