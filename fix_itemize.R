@@ -41,7 +41,7 @@ pkg_note_no_roxygen <- names(pkg_note_roxygen)[!pkg_note_roxygen]
 # Experiment with a test package that uses roxygen2
 # Here using lcsm as it has many NOTES across multiple files
 tmp_dir <- tempdir()
-test_pkg_name <- "lcsm"
+test_pkg_name <- "gamlss.dist" # most revdeps of affected packages
 
 test_pkg <- Rd_NOTE_lb %>%
   filter(Package == test_pkg_name)
@@ -64,9 +64,7 @@ Rd_files_with_notes <- unique(test_pkg_notes$file_name)
 
 # TODO: a function that works on one file, then apply it
 # Adapt the code below
-# Using [3] for lcsm as there are several `itemize` there,
-# and some line_numbers that run over more than one line
-pth <- file.path(tmp_dir, test_pkg_name, "man", Rd_files_with_notes[3])
+pth <- file.path(tmp_dir, test_pkg_name, "man", Rd_files_with_notes[1])
 rd_lines <- readLines(file.path(pth))
 
 # We are working here with a package we know uses roxygen2,
@@ -82,7 +80,10 @@ if (by_roxygen) {
 }
 #TODO: need to fix Rd directly if `by_roxygen` is `FALSE`
 
-R_lines <- readLines(file.path(tmp_dir, test_pkg_name, file))
+if (by_roxygen) {
+  R_lines <- readLines(file.path(tmp_dir, test_pkg_name, file))
+}
+
 
 # find the roxygen comment line where itemize is used
 # NOTE: what if there is more than one itemize, but not all of them are a problem?
