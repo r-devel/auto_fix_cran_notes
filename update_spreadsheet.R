@@ -66,7 +66,7 @@ current_sheet <- read_sheet(
 # because it has a PR_status
 # Hmm, aLFQ is gone, but archived on CRAN, rather than fixed
 current_sheet |>
-  filter_out(!(Package %in% from_CRAN$Package) & is.na(PR_status))
+  filter_out((Package %notin% from_CRAN$Package) & is.na(PR_status))
 
 # TODO: for remaining packages, if Version is the same, no more to do
 # if Version is different, need to update
@@ -82,3 +82,15 @@ add_to_sheet <- from_CRAN |>
 t1 <- tibble(a = 1, b = 2, c = 3)
 t2 <- tibble(a = 4, c = 5)
 bind_rows(t1, t2)
+
+# Current hack:
+# Look at spreadsheet
+browseURL(
+  "https://docs.google.com/spreadsheets/d/1qL5s2okfQmh_ufwh3MS6rJPzIlLmJzIN2g9u2loFzkA/edit?gid=1451772479#gid=1451772479"
+)
+# Find package without PR_status with highest downloads
+# Check if there is still a problem
+from_CRAN |>
+  filter(Package == "RNeXML")
+# Send PR if so
+# Update spreadsheet
