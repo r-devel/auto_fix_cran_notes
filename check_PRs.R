@@ -79,6 +79,37 @@ pr_df <- data.frame(
     sapply(function(x) x[5])
 )
 
+# Get PR details for each PR
+pr_details <- lapply(1:nrow(pr_df), function(i) {
+  pr_url <- sprintf(
+    "https://api.github.com/repos/%s/%s/pulls/%s",
+    pr_df$owner[i],
+    pr_df$repo[i],
+    pr_df$pr_number[i]
+  )
+  res <- request(pr_url) |>
+    req_headers(
+      "Authorization" = paste("Bearer", token),
+      "Content-Type" = "application/json"
+    ) |>
+    req_perform() |>
+    resp_body_json(simplifyVector = TRUE)
+  data.frame(
+    url = pr_url,
+    title = res$title,
+    author = res$user$login,
+    state = res$state,
+    created_at = res$created_at,
+    merged_at = (if (is.null(res$merged_at)) {
+      NA
+    } else {
+      res$merged_at
+    }),
+    stringsAsFactors = FALSE
+  )
+}) |>
+  unlist() |>
+  do.call(rbind, .)
 
 #Compare this list to the Google Sheets
 library(googlesheets4)
